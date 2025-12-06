@@ -82,13 +82,13 @@ find_world_writable() {
     # Instructions:
     # 1. Use 'find' to search $TEST_DIR for items with world-write permission
     #    Hint: find "$TEST_DIR" -perm -002
-    #
+
     # 2. For each item found, you need to:
     #    a. Determine if it's a file or directory using: [ -f "$item" ]
     #    b. Get permissions using: stat -c "%a" "$item"
     #    c. Print formatted output (see example below)
     #    d. Increment the count variable
-    #
+    
     # 3. Use a while loop with process substitution to process results:
     #    while IFS= read -r item; do
     #        # your code here
@@ -114,8 +114,17 @@ find_world_writable() {
     # done < <(find "$TEST_DIR" -perm -002)
 
     # YOUR CODE HERE
-
-
+   find "$TEST_DIR" -perm -002
+   while IFS= read -r item; do
+       perms=$(stat -c "%a" "$item")
+       if [ -f "$item" ]; then
+           echo -e  "${RED}[FILE]${NC} $item ($perms)"
+       elif [ -d "$item" ]; then
+           echo -e "${RED}[DIR]${NC} $item ($perms)"
+       fi 
+       ((count++))
+    done < <(find "$TEST_DIR" -perm -002)
+    
     echo ""
     echo "Found $count world-writable items"
     echo ""
@@ -158,6 +167,12 @@ find_executable_non_scripts() {
     # done < <(find "$TEST_DIR" -type f \( -name "*.html" -o -name "*.css" -o -name "*.txt" -o -name "*.conf" \) -perm /111)
 
     # YOUR CODE HERE
+    find "$TEST_DIR" -type f \( -name "*.html" -o -name "*.css" -o -name "*.txt" -o -name "*.conf" \) -perm /111
+    while IFS= read -r file; do
+       perms=$(stat -c "%a" "$file")
+       echo -e "${YELLOW}[EXEC]${NC} $file ($perms)"
+       ((count++))
+    done < <(find "$TEST_DIR" -type f \( -name "*.html" -o -name "*.css" -o -name "*.txt" -o -name "*.conf" \) -perm /111)
 
 
     echo ""
